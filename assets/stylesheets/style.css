@@ -1,11 +1,10 @@
 body {
   margin: 0 ;
   padding: 15px;
-  background-color: #ccc;
+  background-color: #ffffff;
 }
 canvas {
-  border: solid 2px #000;
-  background-color: #fff;
+  background-color: #ffffff;
   display: block;
   margin: 0px auto 0px auto;
   padding-left: 0;

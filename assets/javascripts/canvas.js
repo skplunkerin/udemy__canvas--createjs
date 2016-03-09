@@ -7,12 +7,7 @@ function init() {
 
   // Create Background
   var bg = new createjs.Shape()
-  bg.graphics.beginLinearGradientFill(
-    ["#728FCE","#DEE0D5","#DEE0D5","#F4A460"],  // Colors to use in gradient
-    [.2, .6, .63, .9],                          // ratios for drawing colors from-to, starting from 0 to 1
-    0, 0,                                       // start x, y positions
-    0, stage.canvas.height                      // end x, y positions
-  )
+  bg.graphics.beginFill("#686868")
   bg.graphics.drawRect(
     0,                    // x position
     0,                    // y position
@@ -43,23 +38,24 @@ function init() {
 
   // Create Title Text
   titleTxt = new createjs.Text(
-    "Hello World!",       // Text
-    "bold 36px verdana",  // font styling
-    "#201A66"             // font color
+    "Click Me!",       // Text
+    "bold 36px lato",  // font styling
+    "#FFFF00"             // font color
   )
   titleTxt.shadow = new createjs.Shadow(
     "#000",   // Color
-    5,        // x position
-    5,        // y position
-    10        // blur
+    2,        // x position
+    2,        // y position
+    2        // blur
   )
-  createjs.Tween
-    .get(titleTxt, {loop: false})  // start position of object
-    .wait(1000)                   // wait before next action
-    .to({rotation: 360}, 1800, createjs.Ease.bounceOut)    // to position and speed
-    .wait(500)                   // wait before next action
-    .to({rotation: 0}, 1800, createjs.Ease.bounceOut)      // to position and speed
-  // be default, totation is at 0, 0 of object (top, left)
+
+  titleTxt.x = stage.canvas.width / 2
+  titleTxt.y = stage.canvas.height / 2
+  titleTxt.alpha = 0
+
+  // createjs.Tween
+  //   .get(titleTxt, {loop: false})  // start position of object
+  // be default, rotation is at 0, 0 of object (top, left)
   // let's change that:
   titleTxt.regX = titleTxt.getMeasuredWidth() / 2
   titleTxt.regY = titleTxt.getMeasuredHeight() / 2
@@ -69,48 +65,81 @@ function init() {
   // titleTxt.y = (stage.canvas.height - titleTxt.getMeasuredHeight()) / 2   // vertically center text
   // Since we're using regX & regY above, the above horizontal/vertical centering isn't the same,
   // need to change to:
-  titleTxt.x = stage.canvas.width / 2
-  // titleTxt.y = stage.canvas.height / 2
-  titleTxt.y = -titleTxt.getMeasuredHeight()
+  // titleTxt.x = stage.canvas.width / 2
+  // // titleTxt.y = stage.canvas.height / 2
+  // titleTxt.y = -titleTxt.getMeasuredHeight()
   createjs.Tween
     .get(titleTxt, {loop: false})
-    .wait(1000)
-    .to({y: stage.canvas.height / 2}, 1000, createjs.Ease.bounceOut)
+    .wait(3000)
+    .to({x: 300, alpha:1, rotation:360}, 2000)
   stage.addChild(titleTxt)
+  titleTxt.addEventListener("click", function(event) { alert("Hello World!"); })
 
-  // Create red circle
+  secretTxt = new createjs.Text(
+    "You Found Me!",       // Text
+    "bold 72px lato",  // font styling
+    "#FFFF00"             // font color
+  )
+  secretTxt.shadow = new createjs.Shadow(
+    "#000",   // Color
+    2,        // x position
+    2,        // y position
+    2        // blur
+  )
+
+  secretTxt.x = 220
+  secretTxt.y = 400
+  secretTxt.alpha = 0.01
+  stage.addChild(secretTxt)
+
+  secretTxt.addEventListener("click", function(event3) {
+    createjs.Tween
+      .get(secretTxt, {loop:false})
+      .to({alpha:1}, 3000, createjs.Ease.circularIn)
+    })
+
   sunShape = new createjs.Shape() // Init shape
   // For solid fill color:
   // sunShape.graphics.beginFill("#F00") // fill shape with color
-  sunShape.graphics.beginRadialGradientFill(
-    ["#F00","#ECB028"],   // Colors to use in gradient
-    [0, 1],               // ratios for drawing colors from-to, starting from 0 to 1
-    0, 0,                 // center x, y position of inner circle
-    5,                    // Radius of inner circle
-    0, 0,                 // center x, y position of outer circle
-    25                    // Radius of outer circle
-  );
+  sunShape.graphics.beginFill("#458B00");
+  sunShape.graphics.beginStroke("#000000");
   sunShape.graphics.drawCircle(
     0,  // x position
     0,  // y position
-    25  // diameter size (in px)
+    1000  // diameter size (in px)
   )
   // sunShape.graphics.drawCircle(25, 25, 25) // x position, y position, diameter size (in px)
   // OR
-  sunShape.x = 25   // Change x position on stage
-  sunShape.y = 25   // Change y position on stage
+  sunShape.x = 600   // Change x position on stage
+  sunShape.y = 300   // Change y position on stage
   sunShape.graphics.endFill() // need to end fill? works when this is commented out
   stage.addChild(sunShape) // Add Child to Stage
+  sunShape.scaleX = 0  //set initial x scale to 0
+  sunShape.scaleY = 0
 
   createjs.Tween
-    .get(sunShape, {loop:true})                         // get initial start position
-    .to({x:525, y:375}, 2000, createjs.Ease.bounceIn)   // set next position, speed, and Easing
-    .to({x:25, y:25}, 2000, createjs.Ease.bounceOut)    // set next position, speed, and Easing
-    .wait(1000)                                         // wait before next action
+    .get(sunShape, {loop:false})                         // get initial start position
+    .to({scaleX:1.0, scaleY:1.0}, 1200, createjs.Ease.circularIn)
+    .wait(500)
+    .to({scaleX:0.4, scaleY:0.4, x:1100,}, 2000, createjs.Ease.circularOut)
+    // .to({x:1100}, 1500, createjs.Ease.circularIn)
+    // .to({x:525, y:375}, 2000, createjs.Ease.bounceIn)   // set next position, speed, and Easing
+    // .to({x:25, y:25}, 2000, createjs.Ease.bounceOut)    // set next position, speed, and Easing
+
+  sunShape.addEventListener("click", function(event2) { //adds click listener on sunShape
+    sunShape.graphics.beginFill("#000000");  //hoping to change color of object on click, doesn't work
+    createjs.Tween
+      .get(sunShape, {loop:false})
+      .to({scaleX:0.3, scaleY:0.3}, 250, createjs.Ease.circularIn)
+      .to({scaleX:0.4, scaleY:0.4}, 250, createjs.Ease.circularInOut)
+    sunShape.graphics.beginFill("#458B0");  // hoping to change color of sunShape back or original if earlier line worked
+    })
 
   createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
   createjs.Ticker.setFPS(60)                              // Set ticker FramesPerSecond
 }
+
+
 
 // Triggered in init() from Ticker.addEventListener
 function tickHandler(e) {
