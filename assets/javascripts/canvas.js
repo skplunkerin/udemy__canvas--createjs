@@ -1,4 +1,4 @@
-var stage, sunShape, titleTxt // Initialize variables used in Canvas
+var stage, sunShape, titleTxt, secretTxt // Initialize variables used in Canvas
 
 // This function runs when body loads
 function init() {
@@ -117,6 +117,7 @@ function init() {
   sunShape.scaleX = 0  //set initial x scale to 0
   sunShape.scaleY = 0
 
+  
   createjs.Tween
     .get(sunShape, {loop:false})                         // get initial start position
     .to({scaleX:1.0, scaleY:1.0}, 1200, createjs.Ease.circularIn)
@@ -127,12 +128,10 @@ function init() {
     // .to({x:25, y:25}, 2000, createjs.Ease.bounceOut)    // set next position, speed, and Easing
 
   sunShape.addEventListener("click", function(event2) { //adds click listener on sunShape
-    sunShape.graphics.beginFill("#000000");  //hoping to change color of object on click, doesn't work
     createjs.Tween
       .get(sunShape, {loop:false})
-      .to({scaleX:0.3, scaleY:0.3}, 250, createjs.Ease.circularIn)
-      .to({scaleX:0.4, scaleY:0.4}, 250, createjs.Ease.circularInOut)
-    sunShape.graphics.beginFill("#458B0");  // hoping to change color of sunShape back or original if earlier line worked
+      .to({beginFill:"#000000", scaleX:0.3, scaleY:0.3}, 250, createjs.Ease.circularIn)
+      .to({scaleX:0.4, scaleY:0.4, beginFill:"#458B0"}, 250, createjs.Ease.circularInOut)
     })
 
   createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
