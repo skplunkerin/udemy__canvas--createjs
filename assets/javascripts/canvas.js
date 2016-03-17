@@ -48,31 +48,43 @@ function init() {
 
 
 
+    var image = new createjs.Bitmap( queue.getResult("greens_icon") )
+    // changing image size doesn't effect Shape BitmapFill below :/
+    // will need to have image at right size before using -_-
+    image.scaleX = .5
+    image.scaleY = .5
 
-    // just adds square image to canvas
-    var image = new createjs.Bitmap( queue.getResult("greens_icon") ) // create image from preloaded greens_icon
-    console.log( image.image.width )
-    image.x = (stage.canvas.width - image.image.width) / 2 // horizontally center
-    image.y = (stage.canvas.height - image.image.height) / 2 // vertically center
-    // stage.addChild( image )
-
-    // trying to create image to be circlular
-    // this will add it as the background-image to a circle
-    // but I'm having problems getting it to "snap" to the circle
-    // instead of 0, 0 x/y position behind circle...
-    var circle = new createjs.Shape()
-    circle.graphics.beginBitmapFill(
-      queue.getResult("greens_icon"), // image to be used as fill
+    // in order to move Shape around with BitmapFill,
+    // need to add Shape to a Container, and move the Container
+    var icon = new createjs.Shape()
+    icon.graphics.beginBitmapFill(
+      // queue.getResult("greens_icon"), // image to be used as fill (from preloadJs)
+      image.image, // image to be used as fill (from image variable)
       "no-repeat" // image repeating or not
     )
-    console.log( circle.graphics )
-    console.log( circle.graphics._fill )
-    circle.graphics.drawCircle(
-      400, // x position
-      300, // y position
-      200 // diameter (in px)
+
+    icon.graphics.drawCircle(
+      image.image.width / 2, // x position (center of image bg)
+      image.image.height / 2, // y position (center of image bg)
+      50 // radius (in px)
     )
-    stage.addChild(circle)
+
+    var container = new createjs.Container()
+    container.addChild( icon )
+    container.x = ( stage.canvas.width - image.image.width ) / 2 // center horizontally
+    container.y = ( stage.canvas.height - image.image.height ) / 2 // center vertically
+    stage.addChild(container)
+
+    var iconStroke = new createjs.Shape()
+    iconStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
+    iconStroke.graphics.drawCircle(
+      stage.canvas.width / 2, // x position
+      stage.canvas.height / 2, // y position
+      60 // radius (in px)
+    )
+    stage.addChild( iconStroke )
+
+
 
     // Create Title Text
     titleTxt = new createjs.Text(
@@ -99,9 +111,9 @@ function init() {
     // sunShape.graphics.drawCircle(
     //   0,  // x position
     //   0,  // y position
-    //   1000  // diameter size (in px)
+    //   1000  // radius size (in px)
     // )
-    // // sunShape.graphics.drawCircle(25, 25, 25) // x position, y position, diameter size (in px)
+    // // sunShape.graphics.drawCircle(25, 25, 25) // x position, y position, radius size (in px)
     // // OR
     // sunShape.x = 600   // Change x position on stage
     // sunShape.y = 300   // Change y position on stage
