@@ -7,7 +7,7 @@ function init() {
 
   // Create Background
   var bg = new createjs.Shape()
-  bg.graphics.beginFill("#686868")
+  bg.graphics.beginFill("#9A9C67")
   bg.graphics.drawRect(
     0,                    // x position
     0,                    // y position
