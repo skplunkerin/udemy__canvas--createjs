@@ -7,6 +7,7 @@ function init() {
   var queue = new createjs.LoadQueue();
   queue.on("complete", loaded, this);
   queue.loadManifest([
+     {id: "greens_big", src:"assets/images/greens.jpg"},
      {id: "greens_icon", src:"assets/images/greens_icon.jpg"}
   ]);
 
@@ -41,39 +42,88 @@ function init() {
     stage.addChild(bg2)  // Add Child to Stage
 
 
+    var circleStrokes = [],
+        positions = [
+          0,
+          200,
+          stage.canvas.width-200,
+          stage.canvas.width
+        ]
+    for (i=0; i<4; i++){
+      circleStrokes[i] = new createjs.Shape()
+      circleStrokes[i].graphics.setStrokeStyle( 3 ).beginStroke("#97AD33")
+      circleStrokes[i].graphics.drawCircle(
+        positions[i], // x position
+        stage.canvas.height / 2, // y position
+        250 // radius (in px)
+      )
+      circleStrokes[i].alpha = .7
+      stage.addChild( circleStrokes[i] )
+    }
+
+    var greensImage = new createjs.Bitmap( queue.getResult("greens_big") )
+
+    // in order to move Shape around with BitmapFill,
+    // need to add Shape to a Container, and move the Container
+    var greens = new createjs.Shape()
+    greens.graphics.beginBitmapFill(
+      // queue.getResult("greens_icon"), // image to be used as fill (from preloadJs)
+      greensImage.image, // image to be used as fill (from image variable)
+      "no-repeat" // image repeating or not
+    )
+
+    greens.graphics.drawCircle(
+      greensImage.image.width / 2, // x position (center of image bg)
+      greensImage.image.height / 2, // y position (center of image bg)
+      400 // radius (in px)
+    )
+
+    var greensContainer = new createjs.Container()
+    greensContainer.addChild( greens )
+    greensContainer.x = ( stage.canvas.width - greensImage.image.width ) / 2 // center horizontally
+    greensContainer.y = ( stage.canvas.height - greensImage.image.height ) / 2 // center vertically
+    stage.addChild(greensContainer)
+
+    var greensStroke = new createjs.Shape()
+    greensStroke.graphics.setStrokeStyle( 10 ).beginStroke("#97AD33")
+    greensStroke.graphics.drawCircle(
+      stage.canvas.width / 2, // x position
+      stage.canvas.height / 2, // y position
+      450 // radius (in px)
+    )
+    greensStroke.alpha = .7
+    stage.addChild( greensStroke )
 
 
 
 
 
-
-
-    var image = new createjs.Bitmap( queue.getResult("greens_icon") )
+    var iconImage = new createjs.Bitmap( queue.getResult("greens_icon") )
     // changing image size doesn't effect Shape BitmapFill below :/
     // will need to have image at right size before using -_-
-    image.scaleX = .5
-    image.scaleY = .5
+    iconImage.scaleX = .5
+    iconImage.scaleY = .5
 
     // in order to move Shape around with BitmapFill,
     // need to add Shape to a Container, and move the Container
     var icon = new createjs.Shape()
     icon.graphics.beginBitmapFill(
       // queue.getResult("greens_icon"), // image to be used as fill (from preloadJs)
-      image.image, // image to be used as fill (from image variable)
+      iconImage.image, // image to be used as fill (from image variable)
       "no-repeat" // image repeating or not
     )
 
     icon.graphics.drawCircle(
-      image.image.width / 2, // x position (center of image bg)
-      image.image.height / 2, // y position (center of image bg)
+      iconImage.image.width / 2, // x position (center of image bg)
+      iconImage.image.height / 2, // y position (center of image bg)
       50 // radius (in px)
     )
 
-    var container = new createjs.Container()
-    container.addChild( icon )
-    container.x = ( stage.canvas.width - image.image.width ) / 2 // center horizontally
-    container.y = ( stage.canvas.height - image.image.height ) / 2 // center vertically
-    stage.addChild(container)
+    var iconContainer = new createjs.Container()
+    iconContainer.addChild( icon )
+    iconContainer.x = ( stage.canvas.width - iconImage.image.width ) / 2 // center horizontally
+    iconContainer.y = ( stage.canvas.height - iconImage.image.height ) / 2 // center vertically
+    stage.addChild(iconContainer)
 
     var iconStroke = new createjs.Shape()
     iconStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
@@ -90,7 +140,7 @@ function init() {
     titleTxt = new createjs.Text(
       "STORMWATER CONTROL",       // Text
       "bold 36px lato",  // font styling
-      "#000"             // font color
+      "#FFF"             // font color
     )
 
     titleTxt.x = (stage.canvas.width - titleTxt.getMeasuredWidth()) / 2 // horizontally center
