@@ -1,5 +1,7 @@
 var stage, sunShape, titleTxt // Initialize variables used in Canvas
 
+var isChrome = window.chrome !== null && window.chrome !== undefined && window.navigator.vendor === "Google Inc.";
+
 // This function runs when body loads
 function init() {
   // preload image assets first with preloadJS
@@ -42,149 +44,179 @@ function init() {
     stage.addChild(bg2)  // Add Child to Stage
 
 
-    var circleStrokes = [],
-        positions = [
-          0,
-          200,
-          stage.canvas.width-200,
-          stage.canvas.width
-        ]
-    for (i=0; i<4; i++){
-      circleStrokes[i] = new createjs.Shape()
-      circleStrokes[i].graphics.setStrokeStyle( 3 ).beginStroke("#97AD33")
-      circleStrokes[i].graphics.drawCircle(
-        positions[i], // x position
-        stage.canvas.height / 2, // y position
-        250 // radius (in px)
+
+      var img = new Image()
+      img.src = "assets/images/greens.jpg"
+      var bitmap = new createjs.Bitmap(img)
+      bitmap.regX = bitmap.image.width / 2
+      bitmap.regY = bitmap.image.height / 2
+      bitmap.x = -500
+      bitmap.y = -300
+
+      var text = new createjs.Text(
+        "STORMWATER CONTROL",
+        "bold 40px helvetica",
+        "#FFF"
       )
-      circleStrokes[i].alpha = .7
-      stage.addChild( circleStrokes[i] )
-    }
+      text.regX = text.getMeasuredWidth() / 2
+      text.regY = text.getMeasuredHeight() / 2
+      text.x = bitmap.image.width / 2
+      text.y = (bitmap.image.height / 2) + 75
+      text.scaleX = text.scaleY = 0
+      createjs.Tween
+        .get( text, { loop:false } )
+        .wait(350)
+        .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.linearIn )
 
-    var greensImage = new createjs.Bitmap( queue.getResult("greens_big") )
+      var maskShape = new createjs.Shape()
+      maskShape.graphics
+        .f( "#FFF" )
+        .drawCircle(
+          0,
+          0,
+          415 )
+      maskShape.regX = bitmap.image.width / 2
+      maskShape.regY = bitmap.image.height / 2
+      maskShape.x = bitmap.image.width / 2
+      maskShape.y = bitmap.image.height / 2
+      maskShape.scaleX = 0.001
+      maskShape.scaleY = 0.001
+      maskShape.compositeOperation = 'destination-in'
 
-    // in order to move Shape around with BitmapFill,
-    // need to add Shape to a Container, and move the Container
-    var greens = new createjs.Shape()
-    greens.graphics.beginBitmapFill(
-      // queue.getResult("greens_icon"), // image to be used as fill (from preloadJs)
-      greensImage.image, // image to be used as fill (from image variable)
-      "no-repeat" // image repeating or not
-    )
+      // Will hold image, text and mask
+      var container = new createjs.Container()
+    	container.regX = bitmap.image.width / 2
+      container.regY = bitmap.image.height / 2
+      container.x = stage.canvas.width / 2
+      container.y = stage.canvas.height / 2
 
-    greens.graphics.drawCircle(
-      greensImage.image.width / 2, // x position (center of image bg)
-      greensImage.image.height / 2, // y position (center of image bg)
-      400 // radius (in px)
-    )
 
-    var greensContainer = new createjs.Container()
-    greensContainer.addChild( greens )
-    greensContainer.x = ( stage.canvas.width - greensImage.image.width ) / 2 // center horizontally
-    greensContainer.y = ( stage.canvas.height - greensImage.image.height ) / 2 // center vertically
-    stage.addChild(greensContainer)
+      container.addChild( bitmap, text, maskShape )
+      stage.addChild(container)
+
+      createjs.Tween
+        .get( maskShape, { loop:false } )
+        .wait(350)
+        .to( { scaleX: 1, scaleY: 1 }, 500 )
+
+        var circleStrokesContainer = new createjs.Container()
+        var circleStrokes = [],
+            positions = [
+              0,
+              200,
+              stage.canvas.width-200,
+              stage.canvas.width
+            ]
+        for (i=0; i<4; i++){
+          circleStrokes[i] = new createjs.Shape()
+          circleStrokes[i].graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
+          circleStrokes[i].graphics.drawCircle(
+            0, // x position
+            0, // y position
+            250 // radius (in px)
+          )
+          circleStrokes[i].x = positions[i]
+          circleStrokes[i].y = stage.canvas.height / 2
+          circleStrokes[i].alpha = 1
+          circleStrokes[i].scaleX = 0
+          circleStrokes[i].scaleY = 0
+          stage.addChild( circleStrokes[i] )
+        }
+
+          createjs.Tween
+            .get(circleStrokes[0], {loop:false})
+            .wait(950)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+
+          createjs.Tween
+            .get(circleStrokes[1], {loop:false})
+            .wait(700)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+
+          createjs.Tween
+            .get(circleStrokes[2], {loop:false})
+            .wait(700)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+
+          createjs.Tween
+            .get(circleStrokes[3], {loop:false})
+            .wait(950)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+
+
 
     var greensStroke = new createjs.Shape()
     greensStroke.graphics.setStrokeStyle( 10 ).beginStroke("#97AD33")
     greensStroke.graphics.drawCircle(
-      stage.canvas.width / 2, // x position
-      stage.canvas.height / 2, // y position
+      0, // x position should be 0 when creating the object for the tween to look right
+      0, // y position
       450 // radius (in px)
     )
-    greensStroke.alpha = .7
+    greensStroke.alpha = 1
+    greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
+    greensStroke.y = stage.canvas.height / 2
     stage.addChild( greensStroke )
+    greensStroke.scaleX = 0
+    greensStroke.scaleY = 0
 
 
+    createjs.Tween
+      .get(greensStroke, {loop:false})
+      .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
 
+    var circle = new createjs.Shape()
+      // Create a matrix
+    var matrix = new createjs.Matrix2D()
+        .translate(-450 / 2, -470 /2)  // Move to 50% the width and height of the image
 
-
-    var iconImage = new createjs.Bitmap( queue.getResult("greens_icon") )
-    // changing image size doesn't effect Shape BitmapFill below :/
-    // will need to have image at right size before using -_-
-    iconImage.scaleX = .5
-    iconImage.scaleY = .5
-
-    // in order to move Shape around with BitmapFill,
-    // need to add Shape to a Container, and move the Container
-    var icon = new createjs.Shape()
-    icon.graphics.beginBitmapFill(
-      // queue.getResult("greens_icon"), // image to be used as fill (from preloadJs)
-      iconImage.image, // image to be used as fill (from image variable)
-      "no-repeat" // image repeating or not
+    circle.graphics.beginBitmapFill(
+      queue.getResult("greens_icon"), // image to be used as fill
+      "no-repeat",
+      matrix // Pass in the matrix
     )
 
-    icon.graphics.drawCircle(
-      iconImage.image.width / 2, // x position (center of image bg)
-      iconImage.image.height / 2, // y position (center of image bg)
-      50 // radius (in px)
+    // Draw the circle at 0,0
+    circle.graphics.drawCircle(
+      0, // x position
+      0, // y position
+      50 // diameter (in px)
     )
 
-    var iconContainer = new createjs.Container()
-    iconContainer.addChild( icon )
-    iconContainer.x = ( stage.canvas.width - iconImage.image.width ) / 2 // center horizontally
-    iconContainer.y = ( stage.canvas.height - iconImage.image.height ) / 2 // center vertically
-    stage.addChild(iconContainer)
+    // Move it to wherever you want
+    circle.x = stage.canvas.width / 2
+    circle.y = (stage.canvas.height / 2) - 75
+    circle.scaleX = circle.scaleY = 0
+    stage.addChild(circle)
 
-    var iconStroke = new createjs.Shape()
-    iconStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
-    iconStroke.graphics.drawCircle(
-      stage.canvas.width / 2, // x position
-      stage.canvas.height / 2, // y position
-      60 // radius (in px)
-    )
-    stage.addChild( iconStroke )
+    createjs.Tween
+      .get(circle, {loop:false})
+      .wait(1225)
+      .to({scaleX:1, scaleY:1}, 300, createjs.Ease.linearIn)
 
-
-
-    // Create Title Text
-    titleTxt = new createjs.Text(
-      "STORMWATER CONTROL",       // Text
-      "bold 36px lato",  // font styling
-      "#FFF"             // font color
-    )
-
-    titleTxt.x = (stage.canvas.width - titleTxt.getMeasuredWidth()) / 2 // horizontally center
-    titleTxt.y = (stage.canvas.height - titleTxt.getMeasuredHeight()) / 2 + 100 // vertically center + 100px down
-    // titleTxt.alpha = 0
-
-    stage.addChild(titleTxt)
+      var greensStroke = new createjs.Shape()
+      greensStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
+      greensStroke.graphics.drawCircle(
+        0, // x position should be 0 when creating the object for the tween to look right
+        0, // y position
+        60 // radius (in px)
+      )
+      greensStroke.alpha = 1
+      greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
+      greensStroke.y = stage.canvas.height / 2 - 75
+      stage.addChild( greensStroke )
+      greensStroke.scaleX = 0
+      greensStroke.scaleY = 0
 
 
-
-
-
-    // sunShape = new createjs.Shape() // Init shape
-    // // For solid fill color:
-    // // sunShape.graphics.beginFill("#F00") // fill shape with color
-    // sunShape.graphics.beginFill("#458B00");
-    // sunShape.graphics.beginStroke("#000000");
-    // sunShape.graphics.drawCircle(
-    //   0,  // x position
-    //   0,  // y position
-    //   1000  // radius size (in px)
-    // )
-    // // sunShape.graphics.drawCircle(25, 25, 25) // x position, y position, radius size (in px)
-    // // OR
-    // sunShape.x = 600   // Change x position on stage
-    // sunShape.y = 300   // Change y position on stage
-    // sunShape.graphics.endFill() // need to end fill? works when this is commented out
-    // stage.addChild(sunShape) // Add Child to Stage
-    // sunShape.scaleX = 0  //set initial x scale to 0
-    // sunShape.scaleY = 0
-
-    
-    // createjs.Tween
-    //   .get(sunShape, {loop:false})                         // get initial start position
-    //   .to({scaleX:1.0, scaleY:1.0}, 1200, createjs.Ease.circularIn)
-    //   .wait(500)
-    //   .to({scaleX:0.4, scaleY:0.4, x:1100,}, 2000, createjs.Ease.circularOut)
-      // .to({x:1100}, 1500, createjs.Ease.circularIn)
-      // .to({x:525, y:375}, 2000, createjs.Ease.bounceIn)   // set next position, speed, and Easing
-      // .to({x:25, y:25}, 2000, createjs.Ease.bounceOut)    // set next position, speed, and Easing
+      createjs.Tween
+        .get(greensStroke, {loop:false})
+        .wait(1225)
+        .to({scaleX:1, scaleY:1}, 300, createjs.Ease.linearIn)
 
     createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
     createjs.Ticker.setFPS(60)                              // Set ticker FramesPerSecond
-  }
+    }
+
 }
 
 
