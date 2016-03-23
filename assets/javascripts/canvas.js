@@ -50,15 +50,28 @@ function init() {
           stage.canvas.width
         ]
     for (i=0; i<4; i++){
+      var width = 250
       circleStrokes[i] = new createjs.Shape()
       circleStrokes[i].graphics.setStrokeStyle( 3 ).beginStroke("#97AD33")
       circleStrokes[i].graphics.drawCircle(
-        positions[i], // x position
-        stage.canvas.height / 2, // y position
-        250 // radius (in px)
+        0, // x position
+        0, // y position
+        width // radius (in px)
       )
+      // adding x/y here instead of above works as it should... not sure why?
+      circleStrokes[i].x = positions[i]
+      circleStrokes[i].y = stage.canvas.height / 2
+      circleStrokes[i].scaleX = circleStrokes[i].scaleY = 0
       circleStrokes[i].alpha = .7
       stage.addChild( circleStrokes[i] )
+
+      // Animations
+      createjs.Tween
+        .get(circleStrokes[i], {loop:false})  // get initial start position
+        .wait(1500)
+        .to({scaleX:1.0, scaleY:1.0}, 250 )//, createjs.Ease.circularOut)
+        .wait(500)
+        .to({scaleX:0, scaleY:0}, 2500 )//, createjs.Ease.circularOut)
     }
 
     var greensImage = new createjs.Bitmap( queue.getResult("greens_big") )
@@ -80,19 +93,38 @@ function init() {
 
     var greensContainer = new createjs.Container()
     greensContainer.addChild( greens )
-    greensContainer.x = ( stage.canvas.width - greensImage.image.width ) / 2 // center horizontally
-    greensContainer.y = ( stage.canvas.height - greensImage.image.height ) / 2 // center vertically
+    console.log( greensContainer.regX )
+    console.log( greensContainer.regY )
+    greensContainer.regX = greensImage.image.width / 2 // center horizontally
+    greensContainer.regY = greensImage.image.height / 2 // center horizontally
+    greensContainer.x = stage.canvas.width / 2 // center horizontally
+    greensContainer.y = stage.canvas.height / 2 // center vertically
+    greensContainer.scaleX = greensContainer.scaleY = 0
     stage.addChild(greensContainer)
+    // Animation
+    createjs.Tween
+      .get(greensContainer, {loop:false})  // get initial start position
+      .wait(500)
+      .to({scaleX:1.0, scaleY:1.0}, 500 )//, createjs.Ease.circularOut)
 
     var greensStroke = new createjs.Shape()
     greensStroke.graphics.setStrokeStyle( 10 ).beginStroke("#97AD33")
     greensStroke.graphics.drawCircle(
-      stage.canvas.width / 2, // x position
-      stage.canvas.height / 2, // y position
+      0, // x position
+      0, // y position
       450 // radius (in px)
     )
+    // adding x/y here instead of above works as it should... not sure why?
+    greensStroke.x = stage.canvas.width / 2
+    greensStroke.y = stage.canvas.height / 2
+    greensStroke.scaleX = greensStroke.scaleY = 0
     greensStroke.alpha = .7
     stage.addChild( greensStroke )
+    // Animation
+    createjs.Tween
+      .get(greensStroke, {loop:false})  // get initial start position
+      .wait(250)
+      .to({scaleX:1.0, scaleY:1.0}, 500 )//, createjs.Ease.circularOut)
 
 
 
@@ -121,18 +153,38 @@ function init() {
 
     var iconContainer = new createjs.Container()
     iconContainer.addChild( icon )
-    iconContainer.x = ( stage.canvas.width - iconImage.image.width ) / 2 // center horizontally
-    iconContainer.y = ( stage.canvas.height - iconImage.image.height ) / 2 // center vertically
+    iconContainer.regX = iconImage.image.width / 2 // center horizontally
+    iconContainer.regY = iconImage.image.height / 2 // center vertically
+    iconContainer.x = stage.canvas.width / 2 // center horizontally
+    iconContainer.y = stage.canvas.height / 2 // center vertically
+    iconContainer.scaleX = iconContainer.scaleY = 0
     stage.addChild(iconContainer)
+    // Animation
+    createjs.Tween
+      .get(iconContainer, {loop:false})  // get initial start position
+      .wait(1500)
+      .to({scaleX:1.0, scaleY:1.0}, 2500 )//, createjs.Ease.circularOut)
+      .wait(500)
+      .to({scaleX:0, scaleY:0}, 2500 )//, createjs.Ease.circularOut)
 
     var iconStroke = new createjs.Shape()
     iconStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
     iconStroke.graphics.drawCircle(
-      stage.canvas.width / 2, // x position
-      stage.canvas.height / 2, // y position
+      0, // x position
+      0, // y position
       60 // radius (in px)
     )
+    iconStroke.x = stage.canvas.width / 2
+    iconStroke.y = stage.canvas.height / 2
+    iconStroke.scaleX = iconStroke.scaleY = 0
     stage.addChild( iconStroke )
+    // Animation
+    createjs.Tween
+      .get(iconStroke, {loop:false})  // get initial start position
+      .wait(1500)
+      .to({scaleX:1.0, scaleY:1.0}, 2500 )//, createjs.Ease.circularOut)
+      .wait(500)
+      .to({scaleX:0, scaleY:0}, 2500 )//, createjs.Ease.circularOut)
 
 
 
@@ -143,11 +195,20 @@ function init() {
       "#FFF"             // font color
     )
 
-    titleTxt.x = (stage.canvas.width - titleTxt.getMeasuredWidth()) / 2 // horizontally center
-    titleTxt.y = (stage.canvas.height - titleTxt.getMeasuredHeight()) / 2 + 100 // vertically center + 100px down
-    // titleTxt.alpha = 0
+    titleTxt.regX = titleTxt.getMeasuredWidth()/ 2 // horizontally center
+    titleTxt.regY = titleTxt.getMeasuredHeight()/ 2 // vertically center + 100px down
+    titleTxt.x = stage.canvas.width / 2 // horizontally center
+    titleTxt.y = stage.canvas.height / 2 + 100 // vertically center + 100px down
+    titleTxt.scaleX = titleTxt.scaleY = 0
 
     stage.addChild(titleTxt)
+    // Animation
+    createjs.Tween
+      .get(titleTxt, {loop:false})  // get initial start position
+      .wait(1500)
+      .to({scaleX:1.0, scaleY:1.0}, 2500 )//, createjs.Ease.circularOut)
+      .wait(500)
+      .to({scaleX:0, scaleY:0}, 2500 )//, createjs.Ease.circularOut)
 
 
 
