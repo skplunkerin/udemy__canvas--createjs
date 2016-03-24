@@ -43,78 +43,31 @@ function init() {
     bg2.graphics.ef()    // short for endFill()
     stage.addChild(bg2)  // Add Child to Stage
 
-    //Outside Circle Strokes
-    var circleStrokesContainer = new createjs.Container()
-    var circleStrokes = [],
-        positions = [
-          0,
-          200,
-          stage.canvas.width-200,
-          stage.canvas.width
-        ]
-    for (i=0; i<4; i++){
-      circleStrokes[i] = new createjs.Shape()
-      circleStrokes[i].graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
-      circleStrokes[i].graphics.drawCircle(
-        0, // x position
-        0, // y position
-        250 // radius (in px)
+
+
+      var img = new Image()
+      img.src = "assets/images/greens.jpg"
+      var bitmap = new createjs.Bitmap(img)
+      bitmap.regX = bitmap.image.width / 2
+      bitmap.regY = bitmap.image.height / 2
+      bitmap.x = -500
+      bitmap.y = -300
+
+      var text = new createjs.Text(
+        "STORMWATER CONTROL",
+        "bold 40px helvetica",
+        "#FFF"
       )
-      circleStrokes[i].x = positions[i]
-      circleStrokes[i].y = stage.canvas.height / 2
-      circleStrokes[i].alpha = 1
-      circleStrokes[i].scaleX = 0
-      circleStrokes[i].scaleY = 0
-      circleStrokesContainer.addChild( circleStrokes[i] )
-      stage.addChild( circleStrokesContainer )
-    }
-
-      createjs.Tween     //Ideally would like to combine 0 and 3, 1 and 2 animations.  Method I tried failed, will need to revisit
-        .get(circleStrokes[0], {loop:false})
-        .wait(950)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-      createjs.Tween
-        .get(circleStrokes[1], {loop:false})
-        .wait(700)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-      createjs.Tween
-        .get(circleStrokes[2], {loop:false})
-        .wait(700)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-      createjs.Tween
-        .get(circleStrokes[3], {loop:false})
-        .wait(950)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-
-    // Center Image
-    var img = new Image()
-    img.src = "assets/images/greens.jpg" //pulling from the queue didn't work?
-    var bitmap = new createjs.Bitmap(img) //new Bitmap object using img as the fill
-    bitmap.regX = bitmap.image.width / 2 //offset registration to middle
-    bitmap.regY = bitmap.image.height / 2
-    bitmap.x = -500  //centering fill image using same as reg isn't working, for now manually gave cooridinates
-    bitmap.y = -300
-
-    var text = new createjs.Text( //create center text object
-      "STORMWATER CONTROL",
-      "bold 40px helvetica",
-      "#FFF"
-    )
       text.regX = text.getMeasuredWidth() / 2
       text.regY = text.getMeasuredHeight() / 2
       text.x = bitmap.image.width / 2
-      text.y = (bitmap.image.height / 2) + 75 //centered and slightly moved down
+      text.y = (bitmap.image.height / 2) + 75
       text.scaleX = text.scaleY = 0
       createjs.Tween
         .get( text, { loop:false } )
         .wait(350)
         .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.linearIn )
 
-      //Mask so the centered image is round
       var maskShape = new createjs.Shape()
       maskShape.graphics
         .f( "#FFF" )
@@ -139,23 +92,59 @@ function init() {
 
 
       container.addChild( bitmap, text, maskShape )
-      //cache container so outside images can be seen
-      // container.cache(0, 0, bitmap.image.width, bitmap.image.height)
       stage.addChild(container)
 
-
-
-
-      //Animate Mask to full scale over .5 seconds
       createjs.Tween
         .get( maskShape, { loop:false } )
         .wait(350)
         .to( { scaleX: 1, scaleY: 1 }, 500 )
 
+        var circleStrokesContainer = new createjs.Container()
+        var circleStrokes = [],
+            positions = [
+              0,
+              200,
+              stage.canvas.width-200,
+              stage.canvas.width
+            ]
+        for (i=0; i<4; i++){
+          circleStrokes[i] = new createjs.Shape()
+          circleStrokes[i].graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
+          circleStrokes[i].graphics.drawCircle(
+            0, // x position
+            0, // y position
+            250 // radius (in px)
+          )
+          circleStrokes[i].x = positions[i]
+          circleStrokes[i].y = stage.canvas.height / 2
+          circleStrokes[i].alpha = 1
+          circleStrokes[i].scaleX = 0
+          circleStrokes[i].scaleY = 0
+          stage.addChild( circleStrokes[i] )
+        }
+
+          createjs.Tween
+            .get(circleStrokes[0], {loop:false})
+            .wait(950)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+
+          createjs.Tween
+            .get(circleStrokes[1], {loop:false})
+            .wait(700)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+
+          createjs.Tween
+            .get(circleStrokes[2], {loop:false})
+            .wait(700)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+
+          createjs.Tween
+            .get(circleStrokes[3], {loop:false})
+            .wait(950)
+            .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
 
 
 
-    //Stroke that surrounds middle image
     var greensStroke = new createjs.Shape()
     greensStroke.graphics.setStrokeStyle( 10 ).beginStroke("#97AD33")
     greensStroke.graphics.drawCircle(
@@ -175,10 +164,8 @@ function init() {
       .get(greensStroke, {loop:false})
       .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
 
-
-    //Small center icon
     var circle = new createjs.Shape()
-    // Create a matrix to translate fill image
+      // Create a matrix
     var matrix = new createjs.Matrix2D()
         .translate(-450 / 2, -470 /2)  // Move to 50% the width and height of the image
 
@@ -195,6 +182,7 @@ function init() {
       50 // diameter (in px)
     )
 
+    // Move it to wherever you want
     circle.x = stage.canvas.width / 2
     circle.y = (stage.canvas.height / 2) - 75
     circle.scaleX = circle.scaleY = 0
@@ -205,29 +193,28 @@ function init() {
       .wait(1225)
       .to({scaleX:1, scaleY:1}, 300, createjs.Ease.linearIn)
 
-    //Small center icon stroke
-    var greensStroke = new createjs.Shape()
-    greensStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
-    greensStroke.graphics.drawCircle(
-      0, // x position should be 0 when creating the object for the tween to look right
-      0, // y position
-      60 // radius (in px)
-    )
-    greensStroke.alpha = 1
-    greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
-    greensStroke.y = stage.canvas.height / 2 - 75
-    stage.addChild( greensStroke )
-    greensStroke.scaleX = 0
-    greensStroke.scaleY = 0
+      var greensStroke = new createjs.Shape()
+      greensStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
+      greensStroke.graphics.drawCircle(
+        0, // x position should be 0 when creating the object for the tween to look right
+        0, // y position
+        60 // radius (in px)
+      )
+      greensStroke.alpha = 1
+      greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
+      greensStroke.y = stage.canvas.height / 2 - 75
+      stage.addChild( greensStroke )
+      greensStroke.scaleX = 0
+      greensStroke.scaleY = 0
 
 
-    createjs.Tween
-      .get(greensStroke, {loop:false})
-      .wait(1225)
-      .to({scaleX:1, scaleY:1}, 300, createjs.Ease.linearIn)
+      createjs.Tween
+        .get(greensStroke, {loop:false})
+        .wait(1225)
+        .to({scaleX:1, scaleY:1}, 300, createjs.Ease.linearIn)
 
     createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
-    createjs.Ticker.setFPS(60)                      // Set ticker FramesPerSecond
+    createjs.Ticker.setFPS(60)                              // Set ticker FramesPerSecond
     }
 
 }
@@ -235,10 +222,9 @@ function init() {
 
 
 // Triggered in init() from Ticker.addEventListener
-function tickHandler() {
+function tickHandler(e) {
   // Update Stage to show newly added Children, etc
   stage.update()
-  container.updateCache() //console states not defined :(
   // Check out start FPS and new FPS (from setFPS())
   // console.log(createjs.Ticker.getMeasuredFPS())
 }
