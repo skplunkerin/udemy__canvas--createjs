@@ -19,7 +19,7 @@ function init() {
     // Create Background
     var bg1 = new createjs.Shape()
     // bg1.graphics.beginFill("#FFF") // first bg is white
-    bg1.graphics.beginFill("ghostwhite") // first bg is white
+    bg1.graphics.beginFill("#FFF") // first bg is white
     bg1.graphics.drawRect(
       0,                    // x position
       0,                    // y position
@@ -47,27 +47,27 @@ function init() {
     var circleStrokes = [],
         positions = [
           0,
-          200,
-          stage.canvas.width-200,
+          225,
+          stage.canvas.width-225,
           stage.canvas.width
         ],
         circleAnimations = [
           {wait: 950, speed: 525},
-          {wait: 700, speed: 525},
-          {wait: 700, speed: 525},
+          {wait: 350, speed: 525},
+          {wait: 350, speed: 525},
           {wait: 950, speed: 525}
         ]
     for (i=0; i<4; i++){
       circleStrokes[i] = new createjs.Shape()
-      circleStrokes[i].graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
+      circleStrokes[i].graphics.setStrokeStyle( 4 ).beginStroke("#859926")
       circleStrokes[i].graphics.drawCircle(
         0, // x position
         0, // y position
-        250 // radius (in px)
+        260 // radius (in px)
       )
       circleStrokes[i].x = positions[i]
       circleStrokes[i].y = stage.canvas.height / 2
-      circleStrokes[i].alpha = 1
+      circleStrokes[i].alpha = 0.8
       circleStrokes[i].scaleX = 0
       circleStrokes[i].scaleY = 0
       circleStrokesContainer.addChild( circleStrokes[i] )
@@ -77,7 +77,7 @@ function init() {
       createjs.Tween
         .get(circleStrokes[i], {loop:false})
         .wait(circleAnimations[i]["wait"])
-        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.linearIn)
+        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.exponentialIn)
     }
 
     // Center Image
@@ -89,19 +89,19 @@ function init() {
 
     var text = new createjs.Text( //create center text object
       "STORMWATER CONTROL",
-      "bold 40px helvetica",
+      "bold 42px Roboto Condensed",
       "#FFF"
     )
     text.regX = text.getMeasuredWidth() / 2
     text.regY = text.getMeasuredHeight() / 2
-    text.x = bitmap.image.width / 2
+    text.x = (bitmap.image.width / 2) + 50
     text.y = (bitmap.image.height / 2) + 75 //centered and slightly moved down
     text.scaleX = 0
     text.scaleY = 0
     createjs.Tween
       .get( text, { loop:false } )
       .wait(350)
-      .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.linearIn )
+      .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.exponentialIn )
 
     //Mask so the centered image is round
     var maskShape = new createjs.Shape()
@@ -110,7 +110,7 @@ function init() {
       .drawCircle(
         bitmap.image.width / 2, // setting to 0 first breaks for some reason?
         bitmap.image.height / 2, // setting to 0 first breaks for some reason?
-        415
+        395
       )
     maskShape.regX = bitmap.image.width / 2
     maskShape.regY = bitmap.image.height / 2
@@ -139,13 +139,13 @@ function init() {
 
     //Stroke that surrounds middle image
     var greensStroke = new createjs.Shape()
-    greensStroke.graphics.setStrokeStyle( 10 ).beginStroke("#97AD33")
+    greensStroke.graphics.setStrokeStyle( 10 ).beginStroke("#859926")
     greensStroke.graphics.drawCircle(
       0, // x position should be 0 when creating the object for the tween to look right
       0, // y position
-      450 // radius (in px)
+      420 // radius (in px)
     )
-    greensStroke.alpha = 1
+    greensStroke.alpha = 0.8
     greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
     greensStroke.y = stage.canvas.height / 2
     stage.addChild( greensStroke )
@@ -154,7 +154,7 @@ function init() {
 
     createjs.Tween
       .get(greensStroke, {loop:false})
-      .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
+      .to({scaleX:1, scaleY:1}, 350, createjs.Ease.exponentialIn)
 
     //Small center icon
     var circle = new createjs.Shape()
@@ -172,11 +172,11 @@ function init() {
     circle.graphics.drawCircle(
       0, // x position
       0, // y position
-      50 // diameter (in px)
+      58 // diameter (in px)
     )
 
     circle.x = stage.canvas.width / 2
-    circle.y = (stage.canvas.height / 2) - 75
+    circle.y = (stage.canvas.height / 2) - 45
     circle.scaleX = 0
     circle.scaleY = 0
     stage.addChild(circle)
@@ -184,19 +184,19 @@ function init() {
     createjs.Tween
       .get(circle, {loop:false})
       .wait(1225)
-      .to({scaleX:1, scaleY:1}, 300, createjs.Ease.linearIn)
+      .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
 
     //Small center icon stroke
     var greensStroke = new createjs.Shape()
-    greensStroke.graphics.setStrokeStyle( 5 ).beginStroke("#97AD33")
+    greensStroke.graphics.setStrokeStyle( 3 ).beginStroke("#859926")
     greensStroke.graphics.drawCircle(
       0, // x position should be 0 when creating the object for the tween to look right
       0, // y position
-      60 // radius (in px)
+      65 // radius (in px)
     )
     greensStroke.alpha = 1
     greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
-    greensStroke.y = stage.canvas.height / 2 - 75
+    greensStroke.y = stage.canvas.height / 2 - 45
     stage.addChild( greensStroke )
     greensStroke.scaleX = 0
     greensStroke.scaleY = 0
@@ -205,7 +205,7 @@ function init() {
     createjs.Tween
       .get(greensStroke, {loop:false})
       .wait(1225)
-      .to({scaleX:1, scaleY:1}, 300, createjs.Ease.linearIn)
+      .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
 
     createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
     createjs.Ticker.setFPS(60)                      // Set ticker FramesPerSecond
