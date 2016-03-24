@@ -1,6 +1,4 @@
-var stage, sunShape, titleTxt // Initialize variables used in Canvas
-
-var isChrome = window.chrome !== null && window.chrome !== undefined && window.navigator.vendor === "Google Inc.";
+var stage, container, titleTxt // Initialize variables used in Canvas
 
 // This function runs when body loads
 function init() {
@@ -31,6 +29,7 @@ function init() {
     // Can only define this after shape is drawn, else no fill applies
     bg1.graphics.ef()    // short for endFill()
     stage.addChild(bg1)  // Add Child to Stage
+
     var bg2 = new createjs.Shape()
     bg2.graphics.beginFill("#97AD33") // second bg is green'ish
     bg2.graphics.drawRect(
@@ -51,6 +50,12 @@ function init() {
           200,
           stage.canvas.width-200,
           stage.canvas.width
+        ],
+        circleAnimations = [
+          {wait: 950, speed: 525},
+          {wait: 700, speed: 525},
+          {wait: 700, speed: 525},
+          {wait: 950, speed: 525}
         ]
     for (i=0; i<4; i++){
       circleStrokes[i] = new createjs.Shape()
@@ -67,93 +72,70 @@ function init() {
       circleStrokes[i].scaleY = 0
       circleStrokesContainer.addChild( circleStrokes[i] )
       stage.addChild( circleStrokesContainer )
+      //Ideally would like to combine 0 and 3, 1 and 2 animations.  Method I tried failed, will need to revisit
+      // Here you go :)
+      createjs.Tween
+        .get(circleStrokes[i], {loop:false})
+        .wait(circleAnimations[i]["wait"])
+        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.linearIn)
     }
 
-      createjs.Tween     //Ideally would like to combine 0 and 3, 1 and 2 animations.  Method I tried failed, will need to revisit
-        .get(circleStrokes[0], {loop:false})
-        .wait(950)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-      createjs.Tween
-        .get(circleStrokes[1], {loop:false})
-        .wait(700)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-      createjs.Tween
-        .get(circleStrokes[2], {loop:false})
-        .wait(700)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-      createjs.Tween
-        .get(circleStrokes[3], {loop:false})
-        .wait(950)
-        .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
-
     // Center Image
-    var img = new Image()
-    img.src = "assets/images/greens.jpg" //pulling from the queue didn't work?
-    var bitmap = new createjs.Bitmap(img) //new Bitmap object using img as the fill
+    var bitmap = new createjs.Bitmap( queue.getResult("greens_big") ) //new Bitmap object using img as the fill
     bitmap.regX = bitmap.image.width / 2 //offset registration to middle
     bitmap.regY = bitmap.image.height / 2
-    bitmap.x = -500  //centering fill image using same as reg isn't working, for now manually gave cooridinates
-    bitmap.y = -300
+    bitmap.x = stage.canvas.width / 2
+    bitmap.y = stage.canvas.height / 2
 
     var text = new createjs.Text( //create center text object
       "STORMWATER CONTROL",
       "bold 40px helvetica",
       "#FFF"
     )
-      text.regX = text.getMeasuredWidth() / 2
-      text.regY = text.getMeasuredHeight() / 2
-      text.x = bitmap.image.width / 2
-      text.y = (bitmap.image.height / 2) + 75 //centered and slightly moved down
-      text.scaleX = text.scaleY = 0
-      createjs.Tween
-        .get( text, { loop:false } )
-        .wait(350)
-        .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.linearIn )
+    text.regX = text.getMeasuredWidth() / 2
+    text.regY = text.getMeasuredHeight() / 2
+    text.x = bitmap.image.width / 2
+    text.y = (bitmap.image.height / 2) + 75 //centered and slightly moved down
+    text.scaleX = 0
+    text.scaleY = 0
+    createjs.Tween
+      .get( text, { loop:false } )
+      .wait(350)
+      .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.linearIn )
 
-      //Mask so the centered image is round
-      var maskShape = new createjs.Shape()
-      maskShape.graphics
-        .f( "#FFF" )
-        .drawCircle(
-          0,
-          0,
-          415 )
-      maskShape.regX = bitmap.image.width / 2
-      maskShape.regY = bitmap.image.height / 2
-      maskShape.x = bitmap.image.width / 2
-      maskShape.y = bitmap.image.height / 2
-      maskShape.scaleX = 0.001
-      maskShape.scaleY = 0.001
-      maskShape.compositeOperation = 'destination-in'
+    //Mask so the centered image is round
+    var maskShape = new createjs.Shape()
+    maskShape.graphics
+      .f( "#FFF" )
+      .drawCircle(
+        bitmap.image.width / 2, // setting to 0 first breaks for some reason?
+        bitmap.image.height / 2, // setting to 0 first breaks for some reason?
+        415
+      )
+    maskShape.regX = bitmap.image.width / 2
+    maskShape.regY = bitmap.image.height / 2
+    maskShape.x = bitmap.image.width / 2
+    maskShape.y = bitmap.image.height / 2
+    maskShape.scaleX = 0.001
+    maskShape.scaleY = 0.001
+    maskShape.compositeOperation = 'destination-in'
 
-      // Will hold image, text and mask
-      var container = new createjs.Container()
-    	container.regX = bitmap.image.width / 2
-      container.regY = bitmap.image.height / 2
-      container.x = stage.canvas.width / 2
-      container.y = stage.canvas.height / 2
+    // Will hold image, text and mask
+    container = new createjs.Container()
+    container.regX = bitmap.image.width / 2
+    container.regY = bitmap.image.height / 2
+    container.x = stage.canvas.width / 2
+    container.y = stage.canvas.height / 2
 
-
-      container.addChild( bitmap, text, maskShape )
-      //cache container so outside images can be seen
-      // container.cache(0, 0, bitmap.image.width, bitmap.image.height)
-      stage.addChild(container)
-
-
-
-
-      //Animate Mask to full scale over .5 seconds
-      createjs.Tween
-        .get( maskShape, { loop:false } )
-        .wait(350)
-        .to( { scaleX: 1, scaleY: 1 }, 500 )
-
-
-
+    container.addChild( bitmap, text, maskShape )
+    //cache container so outside images can be seen
+    container.cache(0, 0, bitmap.image.width, bitmap.image.height)
+    stage.addChild(container)
+    // Animate Mask to full scale over .5 seconds
+    createjs.Tween
+      .get( maskShape, { loop:false } )
+      .wait(350)
+      .to( { scaleX: 1, scaleY: 1 }, 500 )
 
     //Stroke that surrounds middle image
     var greensStroke = new createjs.Shape()
@@ -170,11 +152,9 @@ function init() {
     greensStroke.scaleX = 0
     greensStroke.scaleY = 0
 
-
     createjs.Tween
       .get(greensStroke, {loop:false})
       .to({scaleX:1, scaleY:1}, 525, createjs.Ease.linearIn)
-
 
     //Small center icon
     var circle = new createjs.Shape()
@@ -197,7 +177,8 @@ function init() {
 
     circle.x = stage.canvas.width / 2
     circle.y = (stage.canvas.height / 2) - 75
-    circle.scaleX = circle.scaleY = 0
+    circle.scaleX = 0
+    circle.scaleY = 0
     stage.addChild(circle)
 
     createjs.Tween
@@ -228,8 +209,7 @@ function init() {
 
     createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
     createjs.Ticker.setFPS(60)                      // Set ticker FramesPerSecond
-    }
-
+  }
 }
 
 
