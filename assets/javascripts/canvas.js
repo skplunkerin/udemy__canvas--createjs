@@ -8,7 +8,8 @@ function init() {
   queue.on("complete", loaded, this);
   queue.loadManifest([
      {id: "greens_big", src:"assets/images/greens.jpg"},
-     {id: "greens_icon", src:"assets/images/greens_icon.jpg"}
+     {id: "greens_icon", src:"assets/images/greens_icon.jpg"},
+     {id: "logo", src:"assets/images/company_logo.png"}
   ]);
 
   // once images above preloaded, run this function:
@@ -16,7 +17,7 @@ function init() {
     // Init Stage
     stage = new createjs.Stage("stage-canvas")
 
-    screen1( queue )
+    screen1( queue )  //A note on Tweens, all animations need to total up to be the same to remain in sync when looping; in this case 10000 ms
     screen2( queue )
 
     createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
@@ -65,11 +66,12 @@ function screen1( queue ) {
           stage.canvas.width
         ],
         circleAnimations = [
-          {wait: 950, speed: 525},
-          {wait: 350, speed: 525},
-          {wait: 350, speed: 525},
-          {wait: 950, speed: 525}
+          {wait: 950, wait2: 2600, speed: 525},
+          {wait: 350, wait2: 3200, speed: 525},
+          {wait: 350, wait2: 3200, speed: 525},
+          {wait: 950, wait2: 2600, speed: 525}
         ]
+
     for (i=0; i<4; i++){
       circleStrokes[i] = new createjs.Shape()
       circleStrokes[i].graphics.setStrokeStyle( 4 ).beginStroke("#859926")
@@ -78,7 +80,7 @@ function screen1( queue ) {
         0, // y position
         260 // radius (in px)
       )
-      circleStrokes[i].x = positions[i]
+
       circleStrokes[i].y = stage.canvas.height / 2
       circleStrokes[i].alpha = 0.8
       circleStrokes[i].scaleX = 0
@@ -87,12 +89,15 @@ function screen1( queue ) {
       stage.addChild( circleStrokesContainer )
       //Ideally would like to combine 0 and 3, 1 and 2 animations.  Method I tried failed, will need to revisit
       // Here you go :)
-      createjs.Tween
-        .get(circleStrokes[i], {loop:false})
-        .wait(circleAnimations[i]["wait"])
-        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.exponentialIn)
-        .wait(3200)
-        .to({x:0}, 500, createjs.Ease.linearIn)
+  createjs.Tween
+    .get(circleStrokes[i], {loop:true})
+		.wait(200)
+		.to({x:positions[i],scaleX:0,scaleY:0})
+    .wait(circleAnimations[i]["wait"])
+    .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.exponentialIn)
+    .wait(circleAnimations[i]["wait2"])
+    .to({x:positions[i]-stage.canvas.width}, 500, createjs.Ease.linearIn)
+		.wait(5225)
     }
 
     // Center Image
@@ -101,6 +106,14 @@ function screen1( queue ) {
     bitmap.regY = bitmap.image.height / 2
     bitmap.x = stage.canvas.width / 2
     bitmap.y = stage.canvas.height / 2
+
+    createjs.Tween
+      .get(bitmap, { loop:true } )
+      .to({x:(stage.canvas.width / 2)})
+      .wait(650)
+      .wait(3625)
+      .to( {x:(stage.canvas.width / 2)-(stage.canvas.width)}, 500, createjs.Ease.linearIn )
+      .wait(5225)
 
     var text = new createjs.Text( //create center text object
       "STORMWATER CONTROL",
@@ -111,14 +124,17 @@ function screen1( queue ) {
     text.regY = text.getMeasuredHeight() / 2
     text.x = (bitmap.image.width / 2) + 50
     text.y = (bitmap.image.height / 2) + 75 //centered and slightly moved down
-    text.scaleX = 0
-    text.scaleY = 0
+
     createjs.Tween
-      .get( text, { loop:false } )
+      .get( text, { loop:true } )
+      .to( {x:(bitmap.image.width / 2) + 50})
+      .wait(200)
+      .to( {scaleX: 0, scaleY: 0 } )
       .wait(350)
       .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.exponentialIn )
-      .wait(3050)
-      .to( {x:0}, 500, createjs.Ease.linearIn )
+      .wait(3225)
+      .to( {x:((bitmap.image.width / 2) + 50)-stage.canvas.width}, 500, createjs.Ease.linearIn )
+  	  .wait(5225)
 
     //Mask so the centered image is round
     var maskShape = new createjs.Shape()
@@ -148,13 +164,17 @@ function screen1( queue ) {
     //cache container so outside images can be seen
     container.cache(0, 0, bitmap.image.width, bitmap.image.height)
     stage.addChild(container)
-    // Animate Mask to full scale over .5 seconds
+
     createjs.Tween
-      .get( maskShape, { loop:false } )
-      .wait(350)
-      .to( { scaleX: 1, scaleY: 1 }, 500 )
-      .wait(3100)
-      .to( {x:0}, 500, createjs.Ease.linearIn )
+      .get( maskShape, { loop:true } )
+      .to({x:bitmap.image.width / 2})
+	    .wait(650)
+      .to( { scaleX: 1, scaleY: 1 }, 450 )
+      .wait(3625)
+      .to( {x:(stage.canvas.width / 2)-(stage.canvas.width)}, 500, createjs.Ease.linearIn )
+      .wait(4775)
+
+
 
     //Stroke that surrounds middle image
     var greensStroke = new createjs.Shape()
@@ -165,17 +185,17 @@ function screen1( queue ) {
       420 // radius (in px)
     )
     greensStroke.alpha = 0.8
-    greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
     greensStroke.y = stage.canvas.height / 2
     stage.addChild( greensStroke )
-    greensStroke.scaleX = 0
-    greensStroke.scaleY = 0
 
     createjs.Tween
-      .get(greensStroke, {loop:false})
+      .get(greensStroke, {loop:true})
+  	  .to({ x:stage.canvas.width / 2 , scaleX:0 , scaleY: 0} )
+  	  .wait(200)
       .to({scaleX:1, scaleY:1}, 350, createjs.Ease.exponentialIn)
-      .wait(3650)
-      .to( {x:0}, 500, createjs.Ease.linearIn )
+      .wait(3725)
+      .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.linearIn )
+  	  .wait(5225)
 
     //Small center icon
     var circle = new createjs.Shape()
@@ -203,11 +223,14 @@ function screen1( queue ) {
     stage.addChild(circle)
 
     createjs.Tween
-      .get(circle, {loop:false})
+      .get(circle, {loop:true})
+	    .wait(200)
+	    .to({x:stage.canvas.width / 2, scaleX:0, scaleY:0})
       .wait(1225)
       .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
-      .wait(2475)
-      .to( {x:0}, 500, createjs.Ease.linearIn )
+      .wait(2550)
+      .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.linearIn )
+	     .wait(5225)
 
     //Small center icon stroke
     var greensStroke = new createjs.Shape()
@@ -226,17 +249,21 @@ function screen1( queue ) {
 
 
     createjs.Tween
-      .get(greensStroke, {loop:false})
+      .get(greensStroke, {loop:true})
+	    .wait(200)
+	    .to({x:stage.canvas.width / 2, scaleX:0, scaleY:0})
       .wait(1225)
       .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
-      .wait(2475)
+      .wait(2550)
+	    .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.linearIn )
+	    .wait(5225)
   }
 
   //Create 2nd part of animation
   function screen2( queue ) {
     var textContainer = new createjs.Container()
     bg2 = new createjs.Shape()
-    bg2.graphics.beginFill("#97AD33") // second bg is green'ish
+    bg2.graphics.beginFill("#99AD00") // second bg is green'ish
     bg2.graphics.drawRect(
       0,                    // x position, must set at 0 first, can change afterwards
       0,                    // y position
@@ -247,15 +274,33 @@ function screen1( queue ) {
 
     // Can only define this after shape is drawn, else no fill applies
     bg2.graphics.ef()    // short for endFill()
-    // stage.addChild(bg2)  // Add Child to Stage
-
-    // var text2 = new createjs.Text( //create center text object
-    //   "Every day in Germany about 183 acres of land disappear in favour of the development",
-    //   "24px Roboto Condensed",
-    //   "#FFF"
-    // )
 
     stage.addChild( bg2 )
+
+	createjs.Tween
+    .get((bg2), {loop:true})
+	  .to({x:stage.canvas.width, alpha:1})
+    .wait(4275)
+    .to({x:0, y:0}, 350, createjs.Ease.circleIn)
+	  .wait(5375)
+	  .to({alpha:0})
+
+    var logo = new createjs.Bitmap( queue.getResult("logo") )
+      logo.regX = logo.image.width / 2 //offset registration to middle
+      logo.regY = logo.image.height / 2
+      logo.x = stage.canvas.width + 500
+      logo.y = (stage.canvas.height / 2) + 250
+
+    stage.addChild ( logo )
+
+    createjs.Tween
+      .get((logo), {loop:true})
+	    .to({x:stage.canvas.width + 500})
+      .wait(4275)
+      .to({x:stage.canvas.width / 2}, 350, createjs.Ease.circleIn)
+  	  .wait(5375)
+  	  .to({alpha:0})
+
 
     var circleStrokesContainer = new createjs.Container()
     var circleStrokes = [],
@@ -275,9 +320,9 @@ function screen1( queue ) {
           10
         ],
         circleAnimations = [
-          {wait: 5000, speed: 525},
-          {wait: 5750, speed: 525},
-          {wait: 6500, speed: 525}
+          {wait: 4775, wait2: 4225, speed: 1000},
+          {wait: 5525, wait2: 3475, speed: 1000},
+          {wait: 6275, wait2: 2725, speed: 1000}
         ]
     for (i=0; i<3; i++){
       circleStrokes[i] = new createjs.Shape()
@@ -287,7 +332,7 @@ function screen1( queue ) {
         0, // y position
         150 // radius (in px)
       )
-      circleStrokes[i].radius = radius[i]
+      circleStrokes[i].Radius = radius[i]
       circleStrokes[i].x = xpositions[i]
       circleStrokes[i].y = ypositions[i]
       circleStrokes[i].scaleX = 0
@@ -297,17 +342,16 @@ function screen1( queue ) {
 
       // Tween circle strokes
       createjs.Tween
-        .get(circleStrokes[i], {loop:false})
+        .get(circleStrokes[i], {loop:true})
+		    .to({scaleX:0, scaleY:0})
         .wait(circleAnimations[i]["wait"])
         .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.backIn)
+	      .wait(circleAnimations[i]["wait2"])
     }
 
 
 
-    createjs.Tween
-      .get((bg2), {loop:false})
-      .wait(3225)
-      .to({x:0, y:0}, 900, createjs.Ease.backIn)
+
 
     var text2 = [],
         lines = [
@@ -340,9 +384,11 @@ function screen1( queue ) {
     stage.addChild( text2[i] )
 
     createjs.Tween
-      .get(text2[i], {loop:false})
-      .wait(3500)
-      .to({x:stage.canvas.width / 2}, 1000, createjs.Ease.backIn)
+      .get(text2[i], {loop:true})
+	    .to({x:stage.canvas.width + 500})
+      .wait(4275)
+      .to({x:stage.canvas.width / 2}, 350, createjs.Ease.backIn)
+	    .wait(5375)
   }
 
 

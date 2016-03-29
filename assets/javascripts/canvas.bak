@@ -16,6 +16,19 @@ function init() {
     // Init Stage
     stage = new createjs.Stage("stage-canvas")
 
+    screen1( queue )
+    screen2( queue )
+
+    createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
+    createjs.Ticker.setFPS(60)                              // Set ticker FramesPerSecond
+  }
+}
+
+  // once images above preloaded, run this function:
+function screen1( queue ) {
+    // Init Stage
+    stage = new createjs.Stage("stage-canvas")
+
     // Create Background
     var bg1 = new createjs.Shape()
     // bg1.graphics.beginFill("#FFF") // first bg is white
@@ -78,6 +91,8 @@ function init() {
         .get(circleStrokes[i], {loop:false})
         .wait(circleAnimations[i]["wait"])
         .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.exponentialIn)
+        .wait(3200)
+        .to({x:0}, 500, createjs.Ease.linearIn)
     }
 
     // Center Image
@@ -102,6 +117,8 @@ function init() {
       .get( text, { loop:false } )
       .wait(350)
       .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.exponentialIn )
+      .wait(3050)
+      .to( {x:0}, 500, createjs.Ease.linearIn )
 
     //Mask so the centered image is round
     var maskShape = new createjs.Shape()
@@ -136,6 +153,8 @@ function init() {
       .get( maskShape, { loop:false } )
       .wait(350)
       .to( { scaleX: 1, scaleY: 1 }, 500 )
+      .wait(3100)
+      .to( {x:0}, 500, createjs.Ease.linearIn )
 
     //Stroke that surrounds middle image
     var greensStroke = new createjs.Shape()
@@ -155,6 +174,8 @@ function init() {
     createjs.Tween
       .get(greensStroke, {loop:false})
       .to({scaleX:1, scaleY:1}, 350, createjs.Ease.exponentialIn)
+      .wait(3650)
+      .to( {x:0}, 500, createjs.Ease.linearIn )
 
     //Small center icon
     var circle = new createjs.Shape()
@@ -185,6 +206,8 @@ function init() {
       .get(circle, {loop:false})
       .wait(1225)
       .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
+      .wait(2475)
+      .to( {x:0}, 500, createjs.Ease.linearIn )
 
     //Small center icon stroke
     var greensStroke = new createjs.Shape()
@@ -206,12 +229,127 @@ function init() {
       .get(greensStroke, {loop:false})
       .wait(1225)
       .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
-
-    createjs.Ticker.addEventListener("tick", tickHandler)   // Setup ticker event listener
-    createjs.Ticker.setFPS(60)                      // Set ticker FramesPerSecond
+      .wait(2475)
   }
-}
 
+  //Create 2nd part of animation
+  function screen2( queue ) {
+    var textContainer = new createjs.Container()
+    bg2 = new createjs.Shape()
+    bg2.graphics.beginFill("#97AD33") // second bg is green'ish
+    bg2.graphics.drawRect(
+      0,                    // x position, must set at 0 first, can change afterwards
+      0,                    // y position
+      stage.canvas.width,   // width of shape (in px)
+      stage.canvas.height   // height of shape (in px)
+    )
+    bg2.x = stage.canvas.width
+
+    // Can only define this after shape is drawn, else no fill applies
+    bg2.graphics.ef()    // short for endFill()
+    // stage.addChild(bg2)  // Add Child to Stage
+
+    // var text2 = new createjs.Text( //create center text object
+    //   "Every day in Germany about 183 acres of land disappear in favour of the development",
+    //   "24px Roboto Condensed",
+    //   "#FFF"
+    // )
+
+    stage.addChild( bg2 )
+
+    var circleStrokesContainer = new createjs.Container()
+    var circleStrokes = [],
+        xpositions = [
+          (stage.canvas.width / 2) - 150,
+          (stage.canvas.width / 2) + 100,
+          (stage.canvas.width / 2) + 350
+        ],
+        ypositions = [
+          250,
+          200,
+          600
+        ],
+        radius = [
+          25,
+          10,
+          10
+        ],
+        circleAnimations = [
+          {wait: 5000, speed: 525},
+          {wait: 5750, speed: 525},
+          {wait: 6500, speed: 525}
+        ]
+    for (i=0; i<3; i++){
+      circleStrokes[i] = new createjs.Shape()
+      circleStrokes[i].graphics.setStrokeStyle( 3 ).beginStroke("#ACBE57")
+      circleStrokes[i].graphics.drawCircle(
+        0, // x position
+        0, // y position
+        150 // radius (in px)
+      )
+      circleStrokes[i].radius = radius[i]
+      circleStrokes[i].x = xpositions[i]
+      circleStrokes[i].y = ypositions[i]
+      circleStrokes[i].scaleX = 0
+      circleStrokes[i].scaleY = 0
+      circleStrokesContainer.addChild( circleStrokes[i] )
+      stage.addChild( circleStrokesContainer )
+
+      // Tween circle strokes
+      createjs.Tween
+        .get(circleStrokes[i], {loop:false})
+        .wait(circleAnimations[i]["wait"])
+        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.backIn)
+    }
+
+
+
+    createjs.Tween
+      .get((bg2), {loop:false})
+      .wait(3225)
+      .to({x:0, y:0}, 900, createjs.Ease.backIn)
+
+    var text2 = [],
+        lines = [
+          "Every day in Germany about 183 acres of land disappear in favour of the development",
+          "of streets and building. Soil, together with air and water, are the central basis of life on",
+          "earth. Its consumption affects the habitat of fauna, reduces the biodiversity and",
+          "accelerates climate change. The reduction in surface permeability increases stormwater",
+          "run off which harms water quality, aquatic life and recreation opportunities."
+        ],
+        textPositionY = [
+          (stage.canvas.height /2) - 100,
+          (stage.canvas.height /2) - 50,
+          stage.canvas.height / 2,
+          (stage.canvas.height /2) + 50,
+          (stage.canvas.height /2) + 100
+        ]
+
+    for (i=0; i<5; i++){
+      text2[i] = new createjs.Text(
+        ["lines"],
+        "24px Roboto Condensed",
+        "#FFF"
+      )
+    text2[i].text = lines[i]
+    text2[i].regX = text2[i].getMeasuredWidth() / 2
+    text2[i].regY = text2[i].getMeasuredHeight() / 2
+    text2[i].x = stage.canvas.width + 500
+    text2[i].y = textPositionY[i]
+
+    stage.addChild( text2[i] )
+
+    createjs.Tween
+      .get(text2[i], {loop:false})
+      .wait(3500)
+      .to({x:stage.canvas.width / 2}, 1000, createjs.Ease.backIn)
+  }
+
+
+
+
+
+  }
 
 
 // Triggered in init() from Ticker.addEventListener
