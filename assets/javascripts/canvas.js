@@ -314,9 +314,9 @@ function screen1( queue ) {
           600
         ],
         radius = [
-          25,
-          10,
-          10
+          175,
+          150,
+          100
         ],
         circleAnimations = [
           {wait: 4775, wait2: 4225, speed: 1000},
@@ -331,7 +331,15 @@ function screen1( queue ) {
         0, // y position
         150 // radius (in px)
       )
-      circleStrokes[i].Radius = radius[i]
+      // circleStrokes[i].Radius = radius[i]
+      // ^ doesn't exist, to find out how to change radius, console log and dig deep:
+      // console.log( circleStrokes[i] )
+      // console.log( circleStrokes[i].graphics )
+      // console.log( circleStrokes[i].graphics.command )
+      // console.log( circleStrokes[i].graphics.command.radius )
+      circleStrokes[i].graphics.command.radius = radius[i] // <-- this one works
+      // but isn't needed since we can set this above on line 332
+
       circleStrokes[i].x = xpositions[i]
       circleStrokes[i].y = ypositions[i]
       circleStrokes[i].scaleX = 0
@@ -396,7 +404,7 @@ function screen1( queue ) {
 function tickHandler() {
   // Update Stage to show newly added Children, etc
   stage.update()
-  imgContainer.updateCache() //console states not defined :(
+  imgContainer.updateCache()
   // Check out start FPS and new FPS (from setFPS())
   // console.log(createjs.Ticker.getMeasuredFPS())
 }
