@@ -329,16 +329,8 @@ function screen1( queue ) {
       circleStrokes[i].graphics.drawCircle(
         0, // x position
         0, // y position
-        150 // radius (in px)
+        radius[i] // radius (in px)
       )
-      // circleStrokes[i].Radius = radius[i]
-      // ^ doesn't exist, to find out how to change radius, console log and dig deep:
-      // console.log( circleStrokes[i] )
-      // console.log( circleStrokes[i].graphics )
-      // console.log( circleStrokes[i].graphics.command )
-      // console.log( circleStrokes[i].graphics.command.radius )
-      circleStrokes[i].graphics.command.radius = radius[i] // <-- this one works
-      // but isn't needed since we can set this above on line 332
 
       circleStrokes[i].x = xpositions[i]
       circleStrokes[i].y = ypositions[i]
