@@ -1,4 +1,4 @@
-var stage, container, titleTxt // Initialize variables used in Canvas
+var stage, container, container2, imgContainer, titleTxt // Initialize variables used in Canvas
 
 // This function runs when body loads
 function init() {
@@ -27,8 +27,18 @@ function init() {
 
   // once images above preloaded, run this function:
 function screen1( queue ) {
-    // Init Stage
-    stage = new createjs.Stage("stage-canvas")
+    // Container for screen1
+    container = new createjs.Container()
+    container.x = 0
+    container.y = 0
+
+    // slide screen1 container off screen while screen2 container slides on screen
+    createjs.Tween
+      .get(container, {loop:true})
+	    .wait(4275)
+	    .to({x:stage.canvas.width * -1}, 450, createjs.Ease.quartInOut)
+      .wait(5275)
+	    .to({x:0})
 
     // Create Background
     var bg1 = new createjs.Shape()
@@ -42,7 +52,8 @@ function screen1( queue ) {
     )
     // Can only define this after shape is drawn, else no fill applies
     bg1.graphics.ef()    // short for endFill()
-    stage.addChild(bg1)  // Add Child to Stage
+    container.addChild( bg1 )
+    // stage.addChild( bg1 )  // Add Child to Stage
 
     //Outside Circle Strokes
     var circleStrokesContainer = new createjs.Container()
@@ -75,7 +86,8 @@ function screen1( queue ) {
       circleStrokes[i].scaleX = 0
       circleStrokes[i].scaleY = 0
       circleStrokesContainer.addChild( circleStrokes[i] )
-      stage.addChild( circleStrokesContainer )
+      container.addChild( circleStrokesContainer )
+      // stage.addChild( circleStrokesContainer )
 
       createjs.Tween
         .get(circleStrokes[i], {loop:true})
@@ -140,16 +152,17 @@ function screen1( queue ) {
     maskShape.compositeOperation = 'destination-in'
 
     // Will hold image, text and mask
-    container = new createjs.Container()
-    container.regX = bitmap.image.width / 2
-    container.regY = bitmap.image.height / 2
-    container.x = stage.canvas.width / 2
-    container.y = stage.canvas.height / 2
+    imgContainer = new createjs.Container()
+    imgContainer.regX = bitmap.image.width / 2
+    imgContainer.regY = bitmap.image.height / 2
+    imgContainer.x = stage.canvas.width / 2
+    imgContainer.y = stage.canvas.height / 2
 
-    container.addChild( bitmap, text, maskShape )
-    //cache container so outside images can be seen
-    container.cache(0, 0, bitmap.image.width, bitmap.image.height)
-    stage.addChild(container)
+    imgContainer.addChild( bitmap, text, maskShape )
+    //cache imgContainer so outside images can be seen
+    imgContainer.cache(0, 0, bitmap.image.width, bitmap.image.height)
+    container.addChild( imgContainer )
+    // stage.addChild( imgContainer )
 
     createjs.Tween
       .get( maskShape, { loop:true } )
@@ -170,7 +183,8 @@ function screen1( queue ) {
     )
     greensStroke.alpha = 0.8
     greensStroke.y = stage.canvas.height / 2
-    stage.addChild( greensStroke )
+    container.addChild( greensStroke )
+    // stage.addChild( greensStroke )
 
     createjs.Tween
       .get(greensStroke, {loop:true})
@@ -204,7 +218,8 @@ function screen1( queue ) {
     circle.y = (stage.canvas.height / 2) - 45
     circle.scaleX = 0
     circle.scaleY = 0
-    stage.addChild(circle)
+    container.addChild( circle )
+    // stage.addChild( circle )
 
     createjs.Tween
       .get(circle, {loop:true})
@@ -227,7 +242,8 @@ function screen1( queue ) {
     greensStroke.alpha = 1
     greensStroke.x = stage.canvas.width / 2 // x location can then be set separately after "drawing" the object
     greensStroke.y = stage.canvas.height / 2 - 45
-    stage.addChild( greensStroke )
+    container.addChild( greensStroke )
+    // stage.addChild( greensStroke )
     greensStroke.scaleX = 0
     greensStroke.scaleY = 0
 
@@ -240,11 +256,26 @@ function screen1( queue ) {
       .wait(2550)
 	    .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.linearIn )
 	    .wait(5225)
+
+    stage.addChild( container )
   }
 
   //Create 2nd part of animation
   function screen2( queue ) {
-    var textContainer = new createjs.Container()
+    // Container for screen1
+    container2 = new createjs.Container()
+    container2.x = stage.canvas.width
+    // bg2.x = stage.canvas.width
+    container2.y = 0
+
+    // slide screen2 container on screen while screen1 container slides off screen
+    createjs.Tween
+      .get(container2, {loop:true})
+      .wait(4275)
+      .to({x:0, y:0}, 550, createjs.Ease.quartIn)
+      .wait(5175)
+      .to({x:stage.canvas.width})
+
     bg2 = new createjs.Shape()
     bg2.graphics.beginFill("#99AD00") // second bg is green'ish
     bg2.graphics.drawRect(
@@ -253,37 +284,22 @@ function screen1( queue ) {
       stage.canvas.width,   // width of shape (in px)
       stage.canvas.height   // height of shape (in px)
     )
-    bg2.x = stage.canvas.width
 
     // Can only define this after shape is drawn, else no fill applies
     bg2.graphics.ef()    // short for endFill()
 
-    stage.addChild( bg2 )
-
-    createjs.Tween
-      .get((bg2), {loop:true})
-      .to({x:stage.canvas.width, alpha:1})
-      .wait(4275)
-      .to({x:0, y:0}, 350, createjs.Ease.circleIn)
-      .wait(5375)
-      .to({alpha:0})
+    container2.addChild( bg2 )
+    // stage.addChild( bg2 )
 
     var logo = new createjs.Bitmap( queue.getResult("logo") )
-      logo.regX = logo.image.width / 2 //offset registration to middle
-      logo.regY = logo.image.height / 2
-      logo.x = stage.canvas.width + 500
-      logo.y = (stage.canvas.height / 2) + 250
+    logo.regX = logo.image.width / 2 //offset registration to middle
+    logo.regY = logo.image.height / 2
+    // logo.x = stage.canvas.width + 500
+    logo.x = stage.canvas.width / 2
+    logo.y = (stage.canvas.height / 2) + 250
 
-    stage.addChild ( logo )
-
-    createjs.Tween
-      .get((logo), {loop:true})
-	    .to({x:stage.canvas.width + 500})
-      .wait(4275)
-      .to({x:stage.canvas.width / 2}, 350, createjs.Ease.circleIn)
-  	  .wait(5375)
-  	  .to({alpha:0})
-
+    container2.addChild( logo )
+    // stage.addChild ( logo )
 
     var circleStrokesContainer = new createjs.Container()
     var circleStrokes = [],
@@ -321,7 +337,8 @@ function screen1( queue ) {
       circleStrokes[i].scaleX = 0
       circleStrokes[i].scaleY = 0
       circleStrokesContainer.addChild( circleStrokes[i] )
-      stage.addChild( circleStrokesContainer )
+      container2.addChild( circleStrokesContainer )
+      // stage.addChild( circleStrokesContainer )
 
       // Tween circle strokes
       createjs.Tween
@@ -360,7 +377,8 @@ function screen1( queue ) {
     text2[i].x = stage.canvas.width + 500
     text2[i].y = textPositionY[i]
 
-    stage.addChild( text2[i] )
+    container2.addChild( text2[i] )
+    // stage.addChild( text2[i] )
 
     createjs.Tween
       .get(text2[i], {loop:true})
@@ -369,6 +387,8 @@ function screen1( queue ) {
       .to({x:stage.canvas.width / 2}, 350, createjs.Ease.backIn)
 	    .wait(5375)
   }
+
+  stage.addChild( container2 )
 }
 
 
@@ -376,7 +396,7 @@ function screen1( queue ) {
 function tickHandler() {
   // Update Stage to show newly added Children, etc
   stage.update()
-  container.updateCache() //console states not defined :(
+  imgContainer.updateCache() //console states not defined :(
   // Check out start FPS and new FPS (from setFPS())
   // console.log(createjs.Ticker.getMeasuredFPS())
 }
