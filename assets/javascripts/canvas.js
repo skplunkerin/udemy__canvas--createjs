@@ -65,10 +65,10 @@ function screen1( queue ) {
           stage.canvas.width
         ],
         circleAnimations = [
-          {wait: 1150,  wait2: 2600, speed: 525, ease: createjs.Ease.quartOut},
-          {wait: 550,   wait2: 3200, speed: 525, ease: createjs.Ease.quartOut},
-          {wait: 550,   wait2: 3200, speed: 525, ease: createjs.Ease.quartOut},
-          {wait: 1150,  wait2: 2600, speed: 525, ease: createjs.Ease.quartOut}
+          {wait: 1150,  wait2: 2625, speed: 500, ease: createjs.Ease.cubicOut},
+          {wait: 550,   wait2: 3225, speed: 500, ease: createjs.Ease.cubicOut},
+          {wait: 550,   wait2: 3225, speed: 500, ease: createjs.Ease.cubicOut},
+          {wait: 1150,  wait2: 2625, speed: 500, ease: createjs.Ease.cubicOut}
         ]
 
     for (i=0; i<4; i++){
@@ -129,7 +129,7 @@ function screen1( queue ) {
       .wait(200)
       .to( {scaleX: 0, scaleY: 0 } )
       .wait(350)
-      .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.exponentialIn )
+      .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.linearIn )
       .wait(3225)
       .to( {x:((bitmap.image.width / 2) + 50)-stage.canvas.width}, 500, createjs.Ease.linearIn )
   	  .wait(5225)
@@ -167,10 +167,10 @@ function screen1( queue ) {
     createjs.Tween
       .get( maskShape, { loop:true } )
       .to({x:bitmap.image.width / 2})
-	    .wait(650)
+	    .wait(450)
       .to( { scaleX: 1, scaleY: 1 }, 450 )
-      .wait(3625)
-      .to( {x:(stage.canvas.width / 2)-(stage.canvas.width)}, 500, createjs.Ease.linearIn )
+      .wait(3825)
+      .to( {x:(stage.canvas.width / 2)-(stage.canvas.width)}, 500, createjs.Ease.cubicOut)
       .wait(4775)
 
     //Stroke that surrounds middle image
@@ -192,7 +192,7 @@ function screen1( queue ) {
   	  .wait(200)
       .to({scaleX:1, scaleY:1}, 350, createjs.Ease.exponentialIn)
       .wait(3725)
-      .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.linearIn )
+      .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.cubicOut )
   	  .wait(5225)
 
     //Small center icon
@@ -225,10 +225,10 @@ function screen1( queue ) {
       .get(circle, {loop:true})
 	    .wait(200)
 	    .to({x:stage.canvas.width / 2, scaleX:0, scaleY:0})
-      .wait(1225)
+      .wait(1025)
       .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
-      .wait(2550)
-      .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.linearIn )
+      .wait(2750)
+      .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.cubicOut )
 	     .wait(5225)
 
     //Small center icon stroke
@@ -251,10 +251,10 @@ function screen1( queue ) {
       .get(greensStroke, {loop:true})
 	    .wait(200)
 	    .to({x:stage.canvas.width / 2, scaleX:0, scaleY:0})
-      .wait(1225)
+      .wait(1025)
       .to({scaleX:1, scaleY:1}, 300, createjs.Ease.exponentialIn)
-      .wait(2550)
-	    .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.linearIn )
+      .wait(2750)
+	    .to( {x:(stage.canvas.width / 2)-stage.canvas.width}, 500, createjs.Ease.cubicOut)
 	    .wait(5225)
 
     stage.addChild( container )
@@ -271,9 +271,9 @@ function screen1( queue ) {
     // slide screen2 container on screen while screen1 container slides off screen
     createjs.Tween
       .get(container2, {loop:true})
-      .wait(4275)
+      .wait(3950)
       .to({x:0, y:0}, 550, createjs.Ease.quartIn)
-      .wait(5175)
+      .wait(5500)
       .to({x:stage.canvas.width})
 
     bg2 = new createjs.Shape()
@@ -311,7 +311,7 @@ function screen1( queue ) {
         ypositions = [
           250,
           200,
-          600
+          550
         ],
         radius = [
           175,
@@ -325,7 +325,7 @@ function screen1( queue ) {
         ]
     for (i=0; i<3; i++){
       circleStrokes[i] = new createjs.Shape()
-      circleStrokes[i].graphics.setStrokeStyle( 3 ).beginStroke("#ACBE57")
+      circleStrokes[i].graphics.setStrokeStyle( 2 ).beginStroke("#ACBE57")
       circleStrokes[i].graphics.drawCircle(
         0, // x position
         0, // y position
@@ -345,7 +345,7 @@ function screen1( queue ) {
         .get(circleStrokes[i], {loop:true})
 		    .to({scaleX:0, scaleY:0})
         .wait(circleAnimations[i]["wait"])
-        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.backIn)
+        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.cubicOut)
 	      .wait(circleAnimations[i]["wait2"])
     }
 
@@ -384,7 +384,7 @@ function screen1( queue ) {
       .get(text2[i], {loop:true})
 	    .to({x:stage.canvas.width + 500})
       .wait(4275)
-      .to({x:stage.canvas.width / 2}, 350, createjs.Ease.backIn)
+      .to({x:stage.canvas.width / 2}, 350, createjs.Ease.cubicIn)
 	    .wait(5375)
   }
 
