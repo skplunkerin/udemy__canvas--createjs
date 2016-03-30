@@ -44,18 +44,6 @@ function screen1( queue ) {
     bg1.graphics.ef()    // short for endFill()
     stage.addChild(bg1)  // Add Child to Stage
 
-    var bg2 = new createjs.Shape()
-    bg2.graphics.beginFill("#97AD33") // second bg is green'ish
-    bg2.graphics.drawRect(
-      stage.canvas.width,   // x position, start off screen to right
-      0,                    // y position
-      stage.canvas.width,   // width of shape (in px)
-      stage.canvas.height   // height of shape (in px)
-    )
-    // Can only define this after shape is drawn, else no fill applies
-    bg2.graphics.ef()    // short for endFill()
-    stage.addChild(bg2)  // Add Child to Stage
-
     //Outside Circle Strokes
     var circleStrokesContainer = new createjs.Container()
     var circleStrokes = [],
@@ -66,10 +54,10 @@ function screen1( queue ) {
           stage.canvas.width
         ],
         circleAnimations = [
-          {wait: 950, wait2: 2600, speed: 525},
-          {wait: 350, wait2: 3200, speed: 525},
-          {wait: 350, wait2: 3200, speed: 525},
-          {wait: 950, wait2: 2600, speed: 525}
+          {wait: 1150,  wait2: 2600, speed: 525, ease: createjs.Ease.quartOut},
+          {wait: 550,   wait2: 3200, speed: 525, ease: createjs.Ease.quartOut},
+          {wait: 550,   wait2: 3200, speed: 525, ease: createjs.Ease.quartOut},
+          {wait: 1150,  wait2: 2600, speed: 525, ease: createjs.Ease.quartOut}
         ]
 
     for (i=0; i<4; i++){
@@ -81,23 +69,21 @@ function screen1( queue ) {
         260 // radius (in px)
       )
 
+      circleStrokes[i].x = positions[i]
       circleStrokes[i].y = stage.canvas.height / 2
       circleStrokes[i].alpha = 0.8
       circleStrokes[i].scaleX = 0
       circleStrokes[i].scaleY = 0
       circleStrokesContainer.addChild( circleStrokes[i] )
       stage.addChild( circleStrokesContainer )
-      //Ideally would like to combine 0 and 3, 1 and 2 animations.  Method I tried failed, will need to revisit
-      // Here you go :)
-  createjs.Tween
-    .get(circleStrokes[i], {loop:true})
-		.wait(200)
-		.to({x:positions[i],scaleX:0,scaleY:0})
-    .wait(circleAnimations[i]["wait"])
-    .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], createjs.Ease.exponentialIn)
-    .wait(circleAnimations[i]["wait2"])
-    .to({x:positions[i]-stage.canvas.width}, 500, createjs.Ease.linearIn)
-		.wait(5225)
+
+      createjs.Tween
+        .get(circleStrokes[i], {loop:true})
+        .wait(circleAnimations[i]["wait"])
+        .to({scaleX:1, scaleY:1}, circleAnimations[i]["speed"], circleAnimations[i]["ease"])
+        .wait(circleAnimations[i]["wait2"])
+        .to({x:positions[i]-stage.canvas.width}, 500, createjs.Ease.linearIn)
+        .wait(5225)
     }
 
     // Center Image
@@ -174,8 +160,6 @@ function screen1( queue ) {
       .to( {x:(stage.canvas.width / 2)-(stage.canvas.width)}, 500, createjs.Ease.linearIn )
       .wait(4775)
 
-
-
     //Stroke that surrounds middle image
     var greensStroke = new createjs.Shape()
     greensStroke.graphics.setStrokeStyle( 10 ).beginStroke("#859926")
@@ -247,7 +231,6 @@ function screen1( queue ) {
     greensStroke.scaleX = 0
     greensStroke.scaleY = 0
 
-
     createjs.Tween
       .get(greensStroke, {loop:true})
 	    .wait(200)
@@ -277,13 +260,13 @@ function screen1( queue ) {
 
     stage.addChild( bg2 )
 
-	createjs.Tween
-    .get((bg2), {loop:true})
-	  .to({x:stage.canvas.width, alpha:1})
-    .wait(4275)
-    .to({x:0, y:0}, 350, createjs.Ease.circleIn)
-	  .wait(5375)
-	  .to({alpha:0})
+    createjs.Tween
+      .get((bg2), {loop:true})
+      .to({x:stage.canvas.width, alpha:1})
+      .wait(4275)
+      .to({x:0, y:0}, 350, createjs.Ease.circleIn)
+      .wait(5375)
+      .to({alpha:0})
 
     var logo = new createjs.Bitmap( queue.getResult("logo") )
       logo.regX = logo.image.width / 2 //offset registration to middle
@@ -349,10 +332,6 @@ function screen1( queue ) {
 	      .wait(circleAnimations[i]["wait2"])
     }
 
-
-
-
-
     var text2 = [],
         lines = [
           "Every day in Germany about 183 acres of land disappear in favour of the development",
@@ -390,12 +369,7 @@ function screen1( queue ) {
       .to({x:stage.canvas.width / 2}, 350, createjs.Ease.backIn)
 	    .wait(5375)
   }
-
-
-
-
-
-  }
+}
 
 
 // Triggered in init() from Ticker.addEventListener
