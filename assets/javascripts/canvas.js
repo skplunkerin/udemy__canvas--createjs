@@ -17,8 +17,8 @@ function init() {
   function loaded() {
     stage = new createjs.Stage("stage-canvas") // Init Stage
 
-    // A note on Tweens, all animations need to total up 
-    // to be the same to remain in sync when "looping" 
+    // A note on Tweens, all animations need to total up
+    // to be the same to remain in sync when "looping"
     // (in this case 10000 ms)
     screen1( queue ) // screen1 content
     screen2( queue ) // screen2 content
@@ -124,13 +124,12 @@ function screen1( queue ) {
 
   createjs.Tween
     .get( text, { loop:true } )
-    .to( {x:(bitmap.image.width / 2) + 50})
+    .to( {x:(bitmap.image.width / 2)})
     .wait(200)
     .to( {scaleX: 0, scaleY: 0 } )
     .wait(350)
     .to( { scaleX: 1, scaleY: 1 }, 500,  createjs.Ease.linearIn )
     .wait(3225)
-    .to( {x:((bitmap.image.width / 2) + 50)-stage.canvas.width}, 500, createjs.Ease.linearIn )
     .wait(5225)
 
   // Mask so the centered image is round
